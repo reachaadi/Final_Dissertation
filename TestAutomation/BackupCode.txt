@@ -1,0 +1,48 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+import time
+from openpyxl import load_workbook
+
+# Replace with your actual Excel file path
+file_path = r"C:\Users\padma\Projects\TestAutomation\Credentials.xlsx"
+workbook = load_workbook(filename=file_path)
+sheet = workbook.active
+
+service = Service(r"C:\Users\padma\Documents\ChromeDriver\chromedriver.exe")
+driver = webdriver.Chrome(service=service)
+driver.maximize_window()
+time.sleep(3)
+
+try:
+    for row in sheet.iter_rows(min_row=2, values_only=True):
+        scenario, username, password = row
+        print(f"Running test for {scenario}: username={username} password={password}")
+
+        driver.get("https://practicetestautomation.com/practice-test-login/")
+
+        username_field = driver.find_element(By.ID, "username")
+        username_field.clear()
+        username_field.send_keys(username)
+
+        password_field = driver.find_element(By.ID, "password")
+        password_field.clear()
+        password_field.send_keys(password)
+
+        submit_button = driver.find_element(By.ID, "submit")
+        submit_button.click()
+
+        # Add a wait for page update or message display
+        time.sleep(3)
+
+        # Check for error message or success message based on expected results
+        try:
+            error_message = driver.find_element(By.ID, "error")
+            print(f"{scenario}: Error message displayed: {error_message.text}")
+        except:
+            print(f"{scenario}: No error message displayed, possibly login succeeded.")
+
+        time.sleep(2)  # Pause before next scenario
+
+finally:
+    driver.quit()

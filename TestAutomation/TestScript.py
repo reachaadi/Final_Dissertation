@@ -1,0 +1,137 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+import time
+from openpyxl import load_workbook
+import os
+
+# Excel and WebDriver setup
+file_path = r"C:\Users\padma\Projects\TestAutomation\TestData\Credentials.xlsx"
+workbook = load_workbook(filename=file_path)
+sheet = workbook.active
+
+service = Service(r"C:\Users\padma\Documents\ChromeDriver\chromedriver.exe")
+driver = webdriver.Chrome(service=service)
+driver.maximize_window()
+time.sleep(3)
+
+# Prepare report HTML path
+report_file = r"C:\Users\padma\Projects\TestAutomation\HTML_Reports\CredentialsTest.html"
+screenshots_dir = r"C:\Users\padma\Projects\TestAutomation\Screenshots"
+os.makedirs(screenshots_dir, exist_ok=True)
+
+# Start HTML report
+with open(report_file, "w") as report:
+    report.write(
+        """
+    <html>
+    <head>
+        <title>Automation Report</title>
+        <style>
+            body {
+                background-color: #f8fafd; /* Soft white */
+            }
+            h2 {
+                text-align: center;
+                color: #26547c; /* Deep blue */
+                font-size: 2.2em;
+                margin-bottom: 30px;
+                font-weight: bold;
+                letter-spacing: 1.5px;
+            }
+            table {
+                margin-left: auto;
+                margin-right: auto;
+                border-collapse: collapse;
+                border: 3px solid #5a9bd3; /* Thicker blue border */
+                 font-size: 1.1em; /* Slightly smaller table font */
+                 width: 60%; /* Reduce overall table width */
+            }
+            th, td {
+                padding: 11px 15px;
+                text-align: center;
+                border: 1.5px solid #5a9bd3; /* Thicker inner borders */
+            }
+            th {
+                background-color: #5a9bd3; /* Table header background */
+                color: #fff;
+                font-size: 1.2em;
+                font-weight: bold;
+            }
+            tr:nth-child(even) {
+                background-color: #eaf1fb; /* Alt row color */
+            }
+        </style>
+    </head>
+    <body>
+    <h2>Radio Button Script Execution Report</h2>
+    <table>
+        <tr>
+            <th>Scenario</th>
+            <th>Status</th>
+            <th>Expected Result</th>
+            <th>Actual Result</th>
+            <th>Screenshot</th>
+        </tr>
+    """
+    )
+
+try:
+    for row in sheet.iter_rows(min_row=2, values_only=True):
+        scenario, username, password, expected_result = row
+        print(f"Running test for {scenario}: username={username} password={password}")
+
+        driver.get("https://practicetestautomation.com/practice-test-login/")
+
+        username_field = driver.find_element(By.ID, "username")
+        username_field.clear()
+        username_field.send_keys(username)
+        time.sleep(1)
+        password_field = driver.find_element(By.ID, "password")
+        password_field.clear()
+        password_field.send_keys(password)
+        submit_button = driver.find_element(By.ID, "submit")
+        submit_button.click()
+
+        time.sleep(3)
+
+        test_status = "Fail"
+        actual_result = "No relevant message"
+
+        # Dynamically check expected result from the D column
+        found_message = ""
+        try:
+            error_element = driver.find_element(By.ID, "error")
+            found_message = error_element.text
+        except:
+            try:
+                success_element = driver.find_element(By.XPATH, "//h1")
+                found_message = success_element.text
+            except:
+                found_message = "No relevant message"
+
+        # Assert dynamically based on expected_result from Excel
+        if expected_result.lower() in found_message.lower():
+            test_status = "Pass"
+            actual_result = found_message
+        else:
+            actual_result = found_message
+
+        screenshot_file = os.path.join(screenshots_dir, f"{scenario.replace(' ', '_')}.png")
+        driver.save_screenshot(screenshot_file)
+
+        with open(report_file, "a") as report:
+            report.write(
+                f"<tr><td>{scenario}</td><td>{test_status}</td><td>{expected_result}</td><td>{actual_result}</td>"
+                f"<td><a href='{screenshot_file}' target='_blank'>"
+                f"<img src='{screenshot_file}' height='50'></a></td></tr>"
+            )
+
+        time.sleep(2)  # Pause before next scenario
+
+finally:
+    driver.quit()
+    with open(report_file, "a") as report:
+        report.write("</table></body></html>")
+
+print(f"Test report generated: {report_file}")
