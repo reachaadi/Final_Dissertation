@@ -1,0 +1,25 @@
+[project]
+name = "auto_tc_gen_svc"
+version = "0.1.0"
+description = "Automatic Test Case Generation Service"
+authors = [
+    { name="Padmapriya", email="your.email@example.com" }
+]
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "python-multipart",
+    "jinja2",
+    "python-jose[cryptography]",
+    "passlib[bcrypt]",
+    "aiofiles",
+    "python-docx",
+    "openai",
+    "openpyxl",
+    "google-genai"
+]
+
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"

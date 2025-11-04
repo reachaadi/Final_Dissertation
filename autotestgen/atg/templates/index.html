@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Driven Test Case Generation Tool</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #1a202c;
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            margin: 0.5rem 0 0 0;
+            color: #718096;
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .section-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #2d3748;
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        h2::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+
+        p {
+            color: #4a5568;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        form {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        input[type="file"] {
+            flex: 1;
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 1rem;
+            background: #f8fafc;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        input[type="file"]:hover {
+            border-color: #667eea;
+            background: #f1f5f9;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            white-space: nowrap;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .error {
+            color: #e53e3e;
+            background: #fed7d7;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #e53e3e;
+        }
+
+        .success {
+            color: #38a169;
+            background: #c6f6d5;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #38a169;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .success::before {
+            content: '✓';
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        button:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        button:disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .doc-content {
+            margin-top: 2rem;
+        }
+
+        .doc-section {
+            margin-bottom: 2rem;
+        }
+
+        .doc-section h3 {
+            color: #2d3748;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .doc-table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 600px;
+        }
+
+        .doc-table th,
+        .doc-table td {
+            border: 1px solid #e2e8f0;
+            padding: 1rem;
+            text-align: left;
+            white-space: normal;
+            word-wrap: break-word;
+            vertical-align: top;
+        }
+
+        .doc-table th {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .doc-table tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .doc-table tr:hover {
+            background: #f1f5f9;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul li {
+            background: #f8fafc;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                gap: 1.5rem;
+                padding: 0 1rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .section-card {
+                padding: 2rem;
+            }
+
+            form {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .table-container {
+                margin: 0 -1rem;
+                border-radius: 0;
+            }
+
+            .doc-table th,
+            .doc-table td {
+                padding: 0.75rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 1.5rem 0;
+                margin-bottom: 2rem;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .section-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>AI Driven Test Case Generation Tool</h1>
+        <p>Transform your requirements into comprehensive test cases with the power of artificial intelligence</p>
+    </div>
+
+    <div class="container">
+        <div class="section-card">
+            <h2>Requirements Specifications</h2>
+            <p>Upload your Word documents containing requirements specifications. Our AI will extract and analyze the
+                content to generate comprehensive test cases.</p>
+            {% if upload_success %}
+            <div class="success">
+                Requirements have been uploaded successfully!
+            </div>
+            {% endif %}
+            <form action="/upload" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" accept=".doc,.docx" required>
+                <button type="submit">Upload Document</button>
+            </form>
+            {% if paragraphs or tables %}
+            <div class="doc-content">
+                {% if paragraphs %}
+                <div class="doc-section">
+                    <h3>Extracted Paragraphs</h3>
+                    <ul>
+                        {% for para in paragraphs %}
+                        <li>{{ para }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                {% if tables %}
+                <div class="doc-section">
+                    <h3>Extracted Tables</h3>
+                    {% for table in tables %}
+                    <div class="table-container">
+                        <table class="doc-table">
+                            <thead>
+                                <tr>
+                                    {% for cell in table[0] %}
+                                    <th>{{ cell }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in table[1:] %}
+                                <tr>
+                                    {% for cell in row %}
+                                    <td>{{ cell }}</td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="section-card">
+            <h2>Generated Test Cases</h2>
+            <p>Click the button below to generate comprehensive test cases based on your uploaded requirements using
+                advanced AI algorithms.</p>
+            <form action="/generate" method="post">
+                <button type="submit" {% if not upload_success %}disabled{% endif %}>Generate Test Cases</button>
+            </form>
+            {% if test_cases %}
+            <div class="doc-content">
+                <div class="doc-section">
+                    <h3>AI Generated Test Cases</h3>
+                    <div style="margin-bottom: 1rem;">
+                        <form action="/export-excel" method="post" style="display: inline;">
+                            <button type="submit"
+                                style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);">
+                                📊 Export to Excel
+                            </button>
+                        </form>
+                    </div>
+                    {% if test_cases and test_cases|length > 0 and test_cases[0] is mapping %}
+                    <div class="table-container">
+                        <table class="doc-table">
+                            <thead>
+                                <tr>
+                                    {% for key in test_cases[0].keys() %}
+                                    <th>{{ key|capitalize }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for tc in test_cases %}
+                                <tr>
+                                    {% for key, value in tc.items() %}
+                                    <td>
+                                        {% if key.lower() == 'teststeps' or key.lower() == 'test_steps' %}
+                                        {% if value is iterable and value is not string %}
+                                        {% for step in value %}
+                                        {{ step }}<br>
+                                        {% endfor %}
+                                        {% else %}
+                                        {{ value }}
+                                        {% endif %}
+                                        {% else %}
+                                        {{ value }}
+                                        {% endif %}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <ul>
+                        {% for tc in test_cases %}
+                        <li>{{ tc }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if error %}
+    <div class="container">
+        <div class="error">{{ error }}</div>
+    </div>
+    {% endif %}
+
+    <script>
+        // Handle form submission with loading state
+        document.addEventListener('DOMContentLoaded', function () {
+            const uploadForm = document.querySelector('form[action="/upload"]');
+            const uploadButton = uploadForm ? uploadForm.querySelector('button[type="submit"]') : null;
+            const generateButton = document.querySelector('form[action="/generate"] button[type="submit"]');
+
+            if (uploadForm) {
+                uploadForm.addEventListener('submit', function () {
+                    if (uploadButton) {
+                        uploadButton.textContent = 'Uploading...';
+                        uploadButton.disabled = true;
+                    }
+                });
+            }
+
+            // Correct single-line Jinja -> JS boolean
+            const uploadSuccess = {{ upload_success|default (false) | tojson
+        }};
+
+        // If your Jinja environment doesn't provide `tojson`, use:
+        // const uploadSuccess = {{ 'true' if upload_success else 'false' }};
+
+        if (uploadSuccess && generateButton) {
+            generateButton.disabled = false;
+        }
+        });
+    </script>
+</body>
+
+</html>
