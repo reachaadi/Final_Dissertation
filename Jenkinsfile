@@ -17,18 +17,6 @@ pipeline {
             }
         }
 
-        stage('Setup Python venv') {
-            steps {
-                sh "${PYTHON} --version || true"
-                sh "${PYTHON} -m venv ${VENV_DIR}"
-                sh "${VENV_DIR}/bin/pip install --upgrade pip"
-                // Install required packages explicitly in case requirements.txt is absent
-                //sh "${VENV_DIR}/bin/pip install selenium openpyxl"
-                // If you later add a requirements file, uncomment the next line
-                sh "[ -f ${LOCAL_ROOT}/TestAutomation/requirements.txt ] && ${VENV_DIR}/bin/pip install -r ${LOCAL_ROOT}/TestAutomation/requirements.txt || true"
-            }
-        }
-
         stage('Run Selenium Tests') {
             steps {
                 sh "chmod +x ${LOCAL_ROOT}/TestAutomation/RunTest.sh"
