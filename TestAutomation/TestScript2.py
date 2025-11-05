@@ -9,8 +9,8 @@ from openpyxl import load_workbook
 # Excel and driver setup
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
-file_path = os.path.join(base_dir, "TestData", "Credentials.xlsx")
-report_file = os.path.join(base_dir, "HTML_Reports", "CredentialsTest.html")
+file_path = os.path.join(base_dir, "TestData", "LinkTest.xlsx")
+report_file = os.path.join(base_dir, "HTML_Reports", "LinkTest.html")
 screenshots_dir = os.path.join(base_dir, "Screenshots")
 
 # Ensure output directories exist
@@ -84,6 +84,7 @@ with open(report_file, "w") as report:
 
 try:
     for row in sheet.iter_rows(min_row=2, values_only=True):
+        print(f"Value of row is: {row}")
         scenario, screen, expected_result = row
         print(f"Running {scenario}: Screen={screen}, Expected={expected_result}")
 

@@ -9,8 +9,8 @@ from openpyxl import load_workbook
 # Excel and driver setup
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
-file_path = os.path.join(base_dir, "TestData", "Credentials.xlsx")
-report_file = os.path.join(base_dir, "HTML_Reports", "CredentialsTest.html")
+file_path = os.path.join(base_dir, "TestData", "VerifyRadioButton.xlsx")
+report_file = os.path.join(base_dir, "HTML_Reports", "VerifyRadioButtonReport.html")
 screenshots_dir = os.path.join(base_dir, "Screenshots")
 
 # Ensure output directories exist
