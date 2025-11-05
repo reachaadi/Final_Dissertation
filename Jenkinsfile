@@ -20,7 +20,7 @@ pipeline {
         stage('Run Selenium Tests') {
             steps {
                 // sh "chmod +x ${LOCAL_ROOT}/TestAutomation/RunTest.sh"
-                sh "sudo -u adarsh cd ${LOCAL_ROOT}/TestAutomation && sudo -u adarsh ./RunTest.sh"
+                sh "cd ${LOCAL_ROOT}/TestAutomation && ./RunTest.sh"
 
                 // Copy artifacts back into the Jenkins workspace for archiving/publishing
                 // sh "mkdir -p ${REPORT_DIR} ${SCREENSHOT_DIR}"
