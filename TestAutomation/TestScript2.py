@@ -20,7 +20,20 @@ os.makedirs(screenshots_dir, exist_ok=True)
 workbook = load_workbook(filename=file_path)
 sheet = workbook.active
 
-driver = webdriver.Chrome()
+from selenium.webdriver.chrome.options import Options
+
+# ...existing code...
+# driver = webdriver.Chrome()
+options = Options()
+# Use modern headless mode; fallback to "--headless" if needed for your Chrome version
+options.add_argument("--headless=new")
+# Ensure a consistent viewport for screenshots in headless
+options.add_argument("--window-size=1920,1080")
+options.add_argument("--disable-gpu")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
+
+driver = webdriver.Chrome(options=options)
 driver.maximize_window()
 time.sleep(1)
 
