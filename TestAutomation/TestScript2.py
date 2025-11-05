@@ -19,13 +19,8 @@ os.makedirs(screenshots_dir, exist_ok=True)
 
 workbook = load_workbook(filename=file_path)
 sheet = workbook.active
-import tempfile
-from selenium.webdriver.chrome.options import Options
 
-temp_dir = tempfile.mkdtemp()
-chrome_options = Options()
-chrome_options.add_argument(f"--user-data-dir={temp_dir}")
-driver = webdriver.Chrome(options=chrome_options)
+driver = webdriver.Chrome()
 driver.maximize_window()
 time.sleep(1)
 
