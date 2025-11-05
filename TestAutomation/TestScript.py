@@ -1,23 +1,25 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import time
 from openpyxl import load_workbook
 import os
 
 # Excel and WebDriver setup
-file_path = r"C:\Users\padma\Projects\TestAutomation\TestData\Credentials.xlsx"
+file_path = r"/home/adarsh/projects/Final_Dissertation/TestAutomation/TestData/Credentials.xlsx"
 workbook = load_workbook(filename=file_path)
 sheet = workbook.active
 
-service = Service(r"C:\Users\padma\Documents\ChromeDriver\chromedriver.exe")
-driver = webdriver.Chrome(service=service)
+driver = webdriver.Chrome()
 driver.maximize_window()
-time.sleep(3)
+time.sleep(1)
 
 # Prepare report HTML path
-report_file = r"C:\Users\padma\Projects\TestAutomation\HTML_Reports\CredentialsTest.html"
-screenshots_dir = r"C:\Users\padma\Projects\TestAutomation\Screenshots"
+report_file = (
+    r"/home/adarsh/projects/Final_Dissertation/TestAutomation/HTML_Reports/CredentialsTest.html"
+)
+screenshots_dir = r"/home/adarsh/projects/Final_Dissertation/TestAutomation/Screenshots"
 os.makedirs(screenshots_dir, exist_ok=True)
 
 # Start HTML report
@@ -26,7 +28,7 @@ with open(report_file, "w") as report:
         """
     <html>
     <head>
-        <title>Automation Report</title>
+        <title>Credentials Test Report</title>
         <style>
             body {
                 background-color: #f8fafd; /* Soft white */
@@ -64,7 +66,7 @@ with open(report_file, "w") as report:
         </style>
     </head>
     <body>
-    <h2>Radio Button Script Execution Report</h2>
+    <h2>Credentials Test Execution Report</h2>
     <table>
         <tr>
             <th>Scenario</th>
@@ -83,17 +85,28 @@ try:
 
         driver.get("https://practicetestautomation.com/practice-test-login/")
 
-        username_field = driver.find_element(By.ID, "username")
+        username_field = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "username"))
+        )
         username_field.clear()
         username_field.send_keys(username)
-        time.sleep(1)
-        password_field = driver.find_element(By.ID, "password")
+        password_field = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "password"))
+        )
         password_field.clear()
         password_field.send_keys(password)
-        submit_button = driver.find_element(By.ID, "submit")
+        submit_button = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.ID, "submit"))
+        )
         submit_button.click()
 
-        time.sleep(3)
+        # Wait for either success header or error message
+        WebDriverWait(driver, 10).until(
+            EC.any_of(
+                EC.presence_of_element_located((By.ID, "error")),
+                EC.presence_of_element_located((By.XPATH, "//h1")),
+            )
+        )
 
         test_status = "Fail"
         actual_result = "No relevant message"
@@ -103,11 +116,11 @@ try:
         try:
             error_element = driver.find_element(By.ID, "error")
             found_message = error_element.text
-        except:
+        except Exception:
             try:
                 success_element = driver.find_element(By.XPATH, "//h1")
                 found_message = success_element.text
-            except:
+            except Exception:
                 found_message = "No relevant message"
 
         # Assert dynamically based on expected_result from Excel
@@ -127,7 +140,7 @@ try:
                 f"<img src='{screenshot_file}' height='50'></a></td></tr>"
             )
 
-        time.sleep(2)  # Pause before next scenario
+        time.sleep(1)
 
 finally:
     driver.quit()

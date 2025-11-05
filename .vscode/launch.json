@@ -1,0 +1,34 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python Debugger: ATG Service",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "atg.main:app",
+                "--port",
+                "8060",
+                "--reload"
+            ],
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/autotestgen",
+            "envFile": "${workspaceFolder}/autotestgen/atg/.venv",
+            "console": "integratedTerminal",
+            "env": {
+                "GENAI_KEY": "AIzaSyCt5lJj_ySBBrLg_k7R81RLhoq2ezcMOsE"
+            }
+        }
+    ]
+}

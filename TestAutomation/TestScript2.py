@@ -1,6 +1,5 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
@@ -8,17 +7,16 @@ import os
 from openpyxl import load_workbook
 
 # Excel and driver setup
-file_path = r"C:\Users\padma\Projects\TestAutomation\TestData\LinkTest.xlsx"
+file_path = r"/home/adarsh/projects/Final_Dissertation/TestAutomation/TestData/LinkTest.xlsx"
 workbook = load_workbook(filename=file_path)
 sheet = workbook.active
 
-service = Service(r"C:\Users\padma\Documents\ChromeDriver\chromedriver.exe")
-driver = webdriver.Chrome(service=service)
+driver = webdriver.Chrome()
 driver.maximize_window()
-time.sleep(3)
+time.sleep(1)
 
-report_file = r"C:\Users\padma\Projects\TestAutomation\HTML_Reports\LinkTest.html"
-screenshots_dir = r"C:\Users\padma\Projects\TestAutomation\Screenshots"
+report_file = r"/home/adarsh/projects/Final_Dissertation/TestAutomation/HTML_Reports/LinkTest.html"
+screenshots_dir = r"/home/adarsh/projects/Final_Dissertation/TestAutomation/Screenshots"
 os.makedirs(screenshots_dir, exist_ok=True)
 
 # Start HTML report
@@ -27,7 +25,7 @@ with open(report_file, "w") as report:
         """
     <html>
     <head>
-        <title>Automation Report</title>
+        <title>Link Test Report</title>
         <style>
             body {
                 background-color: #f8fafd; /* Soft white */
@@ -65,7 +63,7 @@ with open(report_file, "w") as report:
         </style>
     </head>
     <body>
-    <h2>Radio Button Script Execution Report</h2>
+    <h2>Link Test Execution Report</h2>
     <table>
         <tr>
             <th>Scenario</th>
@@ -86,16 +84,23 @@ try:
 
         # Step 1: Go to website
         driver.get("https://practicetestautomation.com/practice-test-login/")
-        username_field = driver.find_element(By.ID, "username")
+        username_field = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "username"))
+        )
         username_field.clear()
         username_field.send_keys("student")
-        time.sleep(1)
-        password_field = driver.find_element(By.ID, "password")
+        password_field = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, "password"))
+        )
         password_field.clear()
         password_field.send_keys("Password123")
-        submit_button = driver.find_element(By.ID, "submit")
+        submit_button = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.ID, "submit"))
+        )
         submit_button.click()
-        time.sleep(2)
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.LINK_TEXT, "PRACTICE"))
+        )
 
         # Screenshot 1: After clicking Submit (login)
         screenshot_submit = os.path.join(screenshots_dir, f"{scenario.replace(' ', '_')}_submit.png")
@@ -105,7 +110,7 @@ try:
         WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.LINK_TEXT, "PRACTICE"))
         ).click()
-        time.sleep(2)
+        time.sleep(1)
 
         # Screenshot 2: Scroll until the link from "Screen" column is visible
         try:
@@ -122,7 +127,7 @@ try:
             driver.save_screenshot(screenshot_link)
             print(f"FAIL: Could not scroll to '{screen}'. Exception: {e}")
 
-        time.sleep(2)
+        time.sleep(1)
         # Step 3: Click the expected link
         try:
             link_elem.click()

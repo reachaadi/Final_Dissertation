@@ -10,13 +10,14 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment
 import re
 import uvicorn
+import os
 
 load_dotenv(find_dotenv())
 app = FastAPI()
 templates = Jinja2Templates(directory="atg/templates")
 
-UPLOAD_DIR = "atg\\uploads"
-TEST_CASES_DIR = "atg\\test_cases"
+UPLOAD_DIR = os.path.join("atg", "uploads")
+TEST_CASES_DIR = os.path.join("atg", "test_cases")
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(TEST_CASES_DIR, exist_ok=True)
