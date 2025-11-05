@@ -7,17 +7,22 @@ import os
 from openpyxl import load_workbook
 
 # Excel and driver setup
-file_path = r"/home/adarsh/projects/Final_Dissertation/TestAutomation/TestData/LinkTest.xlsx"
+base_dir = os.path.dirname(os.path.abspath(__file__))
+
+file_path = os.path.join(base_dir, "TestData", "Credentials.xlsx")
+report_file = os.path.join(base_dir, "HTML_Reports", "CredentialsTest.html")
+screenshots_dir = os.path.join(base_dir, "Screenshots")
+
+# Ensure output directories exist
+os.makedirs(os.path.dirname(report_file), exist_ok=True)
+os.makedirs(screenshots_dir, exist_ok=True)
+
 workbook = load_workbook(filename=file_path)
 sheet = workbook.active
 
 driver = webdriver.Chrome()
 driver.maximize_window()
 time.sleep(1)
-
-report_file = r"/home/adarsh/projects/Final_Dissertation/TestAutomation/HTML_Reports/LinkTest.html"
-screenshots_dir = r"/home/adarsh/projects/Final_Dissertation/TestAutomation/Screenshots"
-os.makedirs(screenshots_dir, exist_ok=True)
 
 # Start HTML report
 with open(report_file, "w") as report:
@@ -94,13 +99,9 @@ try:
         )
         password_field.clear()
         password_field.send_keys("Password123")
-        submit_button = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.ID, "submit"))
-        )
+        submit_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "submit")))
         submit_button.click()
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.LINK_TEXT, "PRACTICE"))
-        )
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.LINK_TEXT, "PRACTICE")))
 
         # Screenshot 1: After clicking Submit (login)
         screenshot_submit = os.path.join(screenshots_dir, f"{scenario.replace(' ', '_')}_submit.png")

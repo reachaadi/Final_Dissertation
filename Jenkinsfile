@@ -30,7 +30,8 @@ pipeline {
         stage('Run Selenium Tests') {
             steps {
                 sh 'chmod +x TestAutomation/RunTest.sh'
-                sh 'TestAutomation/RunTest.sh'
+                sh "cd ${VENV_DIR}"
+                sh './RunTest.sh'
             }
         }
 
