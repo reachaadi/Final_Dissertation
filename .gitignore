@@ -216,9 +216,18 @@ __marimo__/
 .streamlit/secrets.toml
 
 #Others
-**/*.xlsx#
-# Ignore PNG and HTML files anywhere in the repository (all directories and subdirectories)
+**/*.xlsx
+**/*.XLSX
+# Ignore PNG, HTML, and Word document files anywhere in the repository (all directories and subdirectories)
 **/*.png
 **/*.PNG
 **/*.html
+**/*.htm
 **/*.HTML
+**/*.docx
+**/*.DOCX
+**/*.doc
+**/*.DOC
+
+*.htm
+*.png

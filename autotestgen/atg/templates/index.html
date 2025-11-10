@@ -361,13 +361,12 @@
                 <div class="doc-section">
                     <h3>AI Generated Test Cases</h3>
                     <div style="margin-bottom: 1rem;">
-                        <form action="/export-excel" method="post" style="display: inline;">
-                            <button type="submit"
-                                style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);">
-                                📊 Export to Excel
-                            </button>
-                        </form>
+                        <button id="exportExcelBtn"
+                            style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);">
+                            📊 Export to Excel
+                        </button>
                     </div>
+                    <div id="exportStatus" class="success" style="display:none;"></div>
                     {% if test_cases and test_cases|length > 0 and test_cases[0] is mapping %}
                     <div class="table-container">
                         <table class="doc-table">
@@ -426,6 +425,8 @@
             const uploadForm = document.querySelector('form[action="/upload"]');
             const uploadButton = uploadForm ? uploadForm.querySelector('button[type="submit"]') : null;
             const generateButton = document.querySelector('form[action="/generate"] button[type="submit"]');
+            const exportBtn = document.getElementById('exportExcelBtn');
+            const exportStatus = document.getElementById('exportStatus');
 
             if (uploadForm) {
                 uploadForm.addEventListener('submit', function () {
@@ -445,6 +446,46 @@
 
         if (uploadSuccess && generateButton) {
             generateButton.disabled = false;
+        }
+
+        async function exportExcel() {
+            if (!exportBtn) return;
+            const originalText = exportBtn.textContent;
+            try {
+                exportBtn.textContent = 'Exporting...';
+                exportBtn.disabled = true;
+                const resp = await fetch('/export-excel', { method: 'POST' });
+                if (!resp.ok) throw new Error('Export failed');
+                const data = await resp.json();
+                if (exportStatus) {
+                    exportStatus.style.display = 'flex';
+                    exportStatus.textContent = `Excel saved to: ${data.saved_path}`;
+                }
+                // Trigger download
+                if (data.download_url) {
+                    const a = document.createElement('a');
+                    a.href = data.download_url;
+                    a.download = data.filename || '';
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                }
+            } catch (e) {
+                if (exportStatus) {
+                    exportStatus.style.display = 'flex';
+                    exportStatus.textContent = 'Failed to export Excel.';
+                }
+            } finally {
+                exportBtn.textContent = originalText;
+                exportBtn.disabled = false;
+            }
+        }
+
+        if (exportBtn) {
+            exportBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                exportExcel();
+            });
         }
         });
     </script>

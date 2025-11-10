@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request, UploadFile, File
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 import os
 import shutil
@@ -17,7 +17,8 @@ app = FastAPI()
 templates = Jinja2Templates(directory="atg/templates")
 
 UPLOAD_DIR = os.path.join("atg", "uploads")
-TEST_CASES_DIR = os.path.join("atg", "test_cases")
+# Export Excel to TestAutomation/Test_Cases as requested
+TEST_CASES_DIR = "/home/adarsh/projects/Final_Dissertation/TestAutomation/Test_Cases"
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(TEST_CASES_DIR, exist_ok=True)
@@ -170,10 +171,22 @@ async def export_to_excel():
     # Save the workbook
     wb.save(excel_path)
 
-    # Return the file for download
+    # Return JSON so UI can show path and then trigger download separately
+    return JSONResponse(
+        {
+            "saved_path": "/".join(excel_path.split("/")[-3:]),
+            "filename": excel_filename,
+            "download_url": f"/download-excel?filename={excel_filename}",
+        }
+    )
+
+
+@app.get("/download-excel")
+async def download_excel(filename: str):
+    file_path = os.path.join(TEST_CASES_DIR, filename)
     return FileResponse(
-        path=excel_path,
-        filename=excel_filename,
+        path=file_path,
+        filename=filename,
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
 

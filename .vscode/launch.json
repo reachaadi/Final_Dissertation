@@ -18,13 +18,11 @@
             "module": "uvicorn",
             "args": [
                 "atg.main:app",
-                "--port",
-                "8060",
                 "--reload"
             ],
             "justMyCode": false,
             "cwd": "${workspaceFolder}/autotestgen",
-            "envFile": "${workspaceFolder}/autotestgen/atg/.venv",
+            "envFile": "${workspaceFolder}/.venv",
             "console": "integratedTerminal",
             "env": {
                 "GENAI_KEY": "AIzaSyCt5lJj_ySBBrLg_k7R81RLhoq2ezcMOsE"
