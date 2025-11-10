@@ -28,5 +28,5 @@ class TestCaseGenerator:
             response_dict["candidates"][0]["content"]["parts"][0]["text"]
             .replace("```json", "")
             .replace("```", "")
-        )["testCases"]
+        )["test_cases"]
         return test_cases
