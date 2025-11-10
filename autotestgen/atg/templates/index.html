@@ -312,6 +312,65 @@
                 padding: 1.5rem;
             }
         }
+
+        /* Loading Spinner Overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top: 5px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .loading-subtext {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
     </style>
 </head>
 
@@ -464,14 +523,27 @@
     </div>
     {% endif %}
 
+    <!-- Loading Spinner Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner-container">
+            <div class="spinner"></div>
+            <div>
+                <div class="loading-text">Generating & Verifying Test Cases</div>
+                <div class="loading-subtext">Please wait while we generate and verify your test cases...</div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Handle form submission with loading state
         document.addEventListener('DOMContentLoaded', function () {
             const uploadForm = document.querySelector('form[action="/upload"]');
             const uploadButton = uploadForm ? uploadForm.querySelector('button[type="submit"]') : null;
-            const generateButton = document.querySelector('form[action="/generate"] button[type="submit"]');
+            const generateForm = document.querySelector('form[action="/generate"]');
+            const generateButton = generateForm ? generateForm.querySelector('button[type="submit"]') : null;
             const exportBtn = document.getElementById('exportExcelBtn');
             const exportStatus = document.getElementById('exportStatus');
+            const loadingOverlay = document.getElementById('loadingOverlay');
 
             if (uploadForm) {
                 uploadForm.addEventListener('submit', function () {
@@ -479,6 +551,24 @@
                         uploadButton.textContent = 'Uploading...';
                         uploadButton.disabled = true;
                     }
+                });
+            }
+
+            // Show spinner when Generate Test Cases button is clicked
+            if (generateForm) {
+                generateForm.addEventListener('submit', function (e) {
+                    // Show loading overlay
+                    if (loadingOverlay) {
+                        loadingOverlay.classList.add('active');
+                    }
+                    // Disable the button
+                    if (generateButton) {
+                        generateButton.disabled = true;
+                        generateButton.textContent = 'Generating...';
+                    }
+                    // Prevent any interaction with the page
+                    document.body.style.pointerEvents = 'none';
+                    // Allow form submission to proceed
                 });
             }
 
@@ -491,6 +581,13 @@
 
         if (uploadSuccess && generateButton) {
             generateButton.disabled = false;
+        }
+
+        // Hide spinner if test cases are already rendered (page reloaded with results)
+        const testCasesRendered = {{ (test_cases is defined and test_cases) | tojson }};
+        if (testCasesRendered && loadingOverlay) {
+            loadingOverlay.classList.remove('active');
+            document.body.style.pointerEvents = 'auto';
         }
 
         async function exportExcel() {
