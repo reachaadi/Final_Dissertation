@@ -1,5 +1,5 @@
 import json
-from atg.services.prompts import build_generation_prompt
+from atg.services.prompts import build_generation_prompt, build_verification_prompt
 from google import genai
 from google.genai import types
 import os
@@ -30,3 +30,32 @@ class TestCaseGenerator:
             .replace("```", "")
         )["test_cases"]
         return test_cases
+
+    def verify_and_modify_test_cases(self, requirements: str, test_cases: list) -> list:
+        """
+        Verifies and improves the generated test cases using LLM.
+
+        Args:
+            requirements: The original requirements text
+            test_cases: List of generated test cases to verify and improve
+
+        Returns:
+            List of verified and improved test cases
+        """
+        prompt = build_verification_prompt(requirements, test_cases)
+        verification_config = types.GenerateContentConfig(
+            temperature=0.3,  # Slightly higher temperature for more creative improvements
+        )
+        response = self.llm_client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt,
+            config=verification_config,
+        )
+        response_dict = response.model_dump()
+        verified_test_cases = json.loads(
+            response_dict["candidates"][0]["content"]["parts"][0]["text"]
+            .replace("```json", "")
+            .replace("```", "")
+            .strip()
+        )["test_cases"]
+        return verified_test_cases

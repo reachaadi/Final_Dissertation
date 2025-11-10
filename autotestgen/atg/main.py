@@ -89,12 +89,21 @@ async def generate_tc(request: Request):
             table_markdown += row_line + "\n"
         all_tables_markdown.append(table_markdown)
 
-    generated_test_cases = TestCaseGenerator().generate_test_cases(
-        requirements="\n\n---\n\n".join(all_tables_markdown), max_cases=5
+    requirements_text = "\n\n---\n\n".join(all_tables_markdown)
+
+    # Generate initial test cases
+    generator = TestCaseGenerator()
+    generated_test_cases = generator.generate_test_cases(
+        requirements=requirements_text, max_cases=5
     )
 
-    # Store test cases globally for export
-    current_test_cases = generated_test_cases
+    # Verify and improve test cases
+    verified_test_cases = generator.verify_and_modify_test_cases(
+        requirements=requirements_text, test_cases=generated_test_cases
+    )
+
+    # Store verified test cases globally for export
+    current_test_cases = verified_test_cases
 
     # Render the extracted content
     return templates.TemplateResponse(
@@ -103,7 +112,7 @@ async def generate_tc(request: Request):
             "request": request,
             "paragraphs": paragraphs,
             "tables": tables,  # Pass as list of lists
-            "test_cases": generated_test_cases,
+            "test_cases": verified_test_cases,
         },
     )
 
