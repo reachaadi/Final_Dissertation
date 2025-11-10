@@ -191,33 +191,63 @@
         }
 
         .doc-table {
-            border-collapse: collapse;
+            display: grid;
+            grid-template-columns: repeat(var(--col-count, 1), minmax(150px, 1fr));
             width: 100%;
             min-width: 600px;
         }
 
-        .doc-table th,
-        .doc-table td {
+        .doc-table-header {
+            display: contents;
+        }
+
+        .doc-table-body {
+            display: contents;
+        }
+
+        .doc-table-row {
+            display: contents;
+        }
+
+        .doc-table-cell {
             border: 1px solid #e2e8f0;
             padding: 1rem;
             text-align: left;
             white-space: normal;
             word-wrap: break-word;
-            vertical-align: top;
+            display: flex;
+            align-items: flex-start;
         }
 
-        .doc-table th {
+        .doc-table-header-cell {
             background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
             font-weight: 600;
             color: #2d3748;
         }
 
-        .doc-table tr:nth-child(even) {
+        .doc-table-row:nth-child(even) .doc-table-cell {
             background: #f8fafc;
         }
 
-        .doc-table tr:hover {
+        .doc-table-row:hover .doc-table-cell {
             background: #f1f5f9;
+        }
+
+        .requirement-separator {
+            grid-column: 1 / -1;
+            height: 2rem;
+            /* margin: 0.5rem 0;
+            border-top: 2px solid #cbd5e1;
+            border-bottom: 2px solid #cbd5e1; */
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            color: #667eea;
+            font-weight: 600;
+            border-left: none;
+            border-right: none;
         }
 
         ul {
@@ -262,8 +292,7 @@
                 border-radius: 0;
             }
 
-            .doc-table th,
-            .doc-table td {
+            .doc-table-cell {
                 padding: 0.75rem;
                 font-size: 0.9rem;
             }
@@ -323,24 +352,24 @@
                     <h3>Extracted Requirement Tables</h3>
                     {% for table in tables %}
                     <div class="table-container">
-                        <table class="doc-table">
-                            <thead>
-                                <tr>
+                        <div class="doc-table" style="--col-count: {{ table[0]|length }}">
+                            <div class="doc-table-header">
+                                <div class="doc-table-row">
                                     {% for cell in table[0] %}
-                                    <th>{{ cell }}</th>
+                                    <div class="doc-table-cell doc-table-header-cell">{{ cell }}</div>
                                     {% endfor %}
-                                </tr>
-                            </thead>
-                            <tbody>
+                                </div>
+                            </div>
+                            <div class="doc-table-body">
                                 {% for row in table[1:] %}
-                                <tr>
+                                <div class="doc-table-row">
                                     {% for cell in row %}
-                                    <td>{{ cell }}</td>
+                                    <div class="doc-table-cell">{{ cell }}</div>
                                     {% endfor %}
-                                </tr>
+                                </div>
                                 {% endfor %}
-                            </tbody>
-                        </table>
+                            </div>
+                        </div>
                     </div>
                     {% endfor %}
                 </div>
@@ -369,19 +398,35 @@
                     <div id="exportStatus" class="success" style="display:none;"></div>
                     {% if test_cases and test_cases|length > 0 and test_cases[0] is mapping %}
                     <div class="table-container">
-                        <table class="doc-table">
-                            <thead>
-                                <tr>
+                        <div class="doc-table" style="--col-count: {{ test_cases[0].keys()|list|length }}">
+                            <div class="doc-table-header">
+                                <div class="doc-table-row">
                                     {% for key in test_cases[0].keys() %}
-                                    <th>{{ key|capitalize }}</th>
+                                    <div class="doc-table-cell doc-table-header-cell">{{ key|capitalize }}</div>
                                     {% endfor %}
-                                </tr>
-                            </thead>
-                            <tbody>
+                                </div>
+                            </div>
+                            <div class="doc-table-body">
                                 {% for tc in test_cases %}
-                                <tr>
+                                {% set current_req_id = tc.get('requirement_id') or tc.get('Requirement_ID') or
+                                tc.get('Requirement ID') or '' %}
+                                {% if loop.index0 == 0 %}
+                                <div class="requirement-separator">
+                                    Requirement ID: {{ current_req_id if current_req_id else 'N/A' }}
+                                </div>
+                                {% elif loop.index0 > 0 %}
+                                {% set prev_tc = test_cases[loop.index0 - 1] %}
+                                {% set prev_req_id = prev_tc.get('requirement_id') or prev_tc.get('Requirement_ID') or
+                                prev_tc.get('Requirement ID') or '' %}
+                                {% if current_req_id != prev_req_id %}
+                                <div class="requirement-separator">
+                                    Requirement ID: {{ current_req_id if current_req_id else 'N/A' }}
+                                </div>
+                                {% endif %}
+                                {% endif %}
+                                <div class="doc-table-row">
                                     {% for key, value in tc.items() %}
-                                    <td>
+                                    <div class="doc-table-cell">
                                         {% if key.lower() == 'teststeps' or key.lower() == 'test_steps' %}
                                         {% if value is iterable and value is not string %}
                                         {% for step in value %}
@@ -393,12 +438,12 @@
                                         {% else %}
                                         {{ value }}
                                         {% endif %}
-                                    </td>
+                                    </div>
                                     {% endfor %}
-                                </tr>
+                                </div>
                                 {% endfor %}
-                            </tbody>
-                        </table>
+                            </div>
+                        </div>
                     </div>
                     {% else %}
                     <ul>
