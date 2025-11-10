@@ -18,7 +18,9 @@ templates = Jinja2Templates(directory="atg/templates")
 
 UPLOAD_DIR = os.path.join("atg", "uploads")
 # Export Excel to TestAutomation/Test_Cases as requested
-TEST_CASES_DIR = "/home/adarsh/projects/Final_Dissertation/TestAutomation/Test_Cases"
+# Get project root directory (2 levels up from autotestgen/atg/main.py)
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+TEST_CASES_DIR = os.path.join(PROJECT_ROOT, "TestAutomation", "Test_Cases")
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(TEST_CASES_DIR, exist_ok=True)

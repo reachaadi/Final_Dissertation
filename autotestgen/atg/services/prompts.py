@@ -83,6 +83,7 @@ IMPORTANT:
 - Maintain the order of test cases ordered by requirement_id and test_case_id
 - Maintain the same JSON structure as the input
 - Preserve test_case_id values unless you're adding new test cases (use TC-XXX format)
+- Use at most 5 test cases per requirement
 - Return only the JSON object, no explanatory text before or after"""
 
     example = """{

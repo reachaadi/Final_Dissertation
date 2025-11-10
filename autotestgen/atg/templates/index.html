@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Driven Test Case Generation Tool</title>
+    <title>⚡ AI Driven TCG</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -29,6 +29,35 @@
             font-size: 2.5rem;
             font-weight: 700;
             letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .home-icon {
+            cursor: pointer;
+            font-size: 2rem;
+            color: #667eea;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.1);
+            text-decoration: none;
+        }
+
+        .home-icon:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: scale(1.1);
+            color: #764ba2;
+        }
+
+        .home-icon:active {
+            transform: scale(0.95);
         }
 
         .header p {
@@ -271,6 +300,13 @@
 
             .header h1 {
                 font-size: 2rem;
+                gap: 0.75rem;
+            }
+
+            .home-icon {
+                font-size: 1.5rem;
+                width: 40px;
+                height: 40px;
             }
 
             .section-card {
@@ -306,6 +342,13 @@
 
             .header h1 {
                 font-size: 1.8rem;
+                gap: 0.5rem;
+            }
+
+            .home-icon {
+                font-size: 1.3rem;
+                width: 36px;
+                height: 36px;
             }
 
             .section-card {
@@ -376,7 +419,10 @@
 
 <body>
     <div class="header">
-        <h1>AI Driven Test Case Generation Tool</h1>
+        <h1>
+            <a href="/" class="home-icon" title="Home">⚡</a>
+            AI Driven Test Case Generation Tool
+        </h1>
         <p>Transform your requirements into comprehensive test cases with the power of artificial intelligence</p>
     </div>
 
@@ -437,7 +483,7 @@
             {% endif %}
         </div>
 
-        <div class="section-card">
+        <div class="section-card" id="generatedTestCasesSection">
             <h2>Generated Test Cases</h2>
             <p>Click the button below to generate comprehensive test cases based on your uploaded requirements using
                 advanced AI algorithms.</p>
@@ -588,6 +634,18 @@
         if (testCasesRendered && loadingOverlay) {
             loadingOverlay.classList.remove('active');
             document.body.style.pointerEvents = 'auto';
+
+            // Scroll to Generated Test Cases section
+            const testCasesSection = document.getElementById('generatedTestCasesSection');
+            if (testCasesSection) {
+                // Small delay to ensure content is fully rendered
+                setTimeout(function () {
+                    testCasesSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }, 100);
+            }
         }
 
         async function exportExcel() {
