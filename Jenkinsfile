@@ -30,7 +30,7 @@ pipeline {
         stage('Run Selenium Tests') {
             steps {
                 bat """
-                    call TestAutomation\\RunTest.bat'
+                    call TestAutomation\\RunTest.bat
                 """
             }
         }
