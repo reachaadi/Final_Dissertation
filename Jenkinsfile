@@ -3,9 +3,9 @@ pipeline {
 
     environment {
         PYTHON = 'python'
-        VENV_DIR = 'TestAutomation/.venv'
-        REPORT_DIR = 'TestAutomation/HTML_Reports'
-        SCREENSHOT_DIR = 'TestAutomation/Screenshots'
+        VENV_DIR = 'TestAutomation\\.venv'
+        REPORT_DIR = 'TestAutomation\\HTML_Reports'
+        SCREENSHOT_DIR = 'TestAutomation\\Screenshots'
     }
 
     stages {
@@ -17,26 +17,26 @@ pipeline {
 
         stage('Setup Python venv') {
             steps {
-                sh "${PYTHON} --version || true"
-                sh "${PYTHON} -m venv ${VENV_DIR}"
-                sh "${VENV_DIR}/bin/pip install --upgrade pip"
-                // Install required packages explicitly in case requirements.txt is absent
-                //sh "${VENV_DIR}/bin/pip install selenium openpyxl"
-                // If you later add a requirements file, uncomment the next line
-                sh "[ -f TestAutomation/requirements.txt ] && ${VENV_DIR}/bin/pip install -r TestAutomation/requirements.txt || true"
+                bat """
+                    echo 'Hello Adarsh!'
+                    ${PYTHON} --version
+                    ${PYTHON} -m venv ${VENV_DIR}
+                    ${VENV_DIR}\\Scripts\\activate
+                    ${VENV_DIR}\\bin\\pip install selenium openpyxl
+                """
             }
         }
 
         stage('Run Selenium Tests') {
             steps {
-                sh 'chmod +x TestAutomation/RunTest.sh'
-                sh 'TestAutomation/RunTest.sh'
+                sh 'chmod +x TestAutomation\\RunTest.sh'
+                sh 'TestAutomation\\RunTest.sh'
             }
         }
 
         stage('Archive Artifacts') {
             steps {
-                archiveArtifacts artifacts: 'TestAutomation/HTML_Reports/*.html, TestAutomation/Screenshots/*.png', allowEmptyArchive: true
+                archiveArtifacts artifacts: 'TestAutomation\\HTML_Reports\\*.html, TestAutomation\\Screenshots\\*.png', allowEmptyArchive: true
             }
         }
 
