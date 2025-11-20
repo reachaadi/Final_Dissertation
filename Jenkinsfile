@@ -29,8 +29,9 @@ pipeline {
 
         stage('Run Selenium Tests') {
             steps {
-                sh 'chmod +x TestAutomation\\RunTest.sh'
-                sh 'TestAutomation\\RunTest.sh'
+                bat """
+                    call TestAutomation\\RunTest.bat'
+                """
             }
         }
 
