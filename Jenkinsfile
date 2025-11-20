@@ -18,11 +18,10 @@ pipeline {
         stage('Setup Python venv') {
             steps {
                 bat """
-                    echo 'Hello Adarsh!'
                     ${PYTHON} --version
                     ${PYTHON} -m venv ${VENV_DIR}
-                    ${VENV_DIR}\\Scripts\\activate
-                    ${VENV_DIR}\\bin\\pip install selenium openpyxl
+                    call ${VENV_DIR}\\Scripts\\activate.bat
+                    pip install selenium openpyxl
                 """
             }
         }
