@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        PYTHON = 'python3'
+        PYTHON = 'python'
         VENV_DIR = 'TestAutomation/.venv'
         REPORT_DIR = 'TestAutomation/HTML_Reports'
         SCREENSHOT_DIR = 'TestAutomation/Screenshots'
