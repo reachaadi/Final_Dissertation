@@ -16,7 +16,7 @@ set scripts=TestScript.py TestScript3.py
 
 for %%s in (%scripts%) do (
     echo Running %%s...
-    "%venv_python%" "%script_dir%%%s"
+    "%venv_python%" "%script_dir%\%%s"
     if errorlevel 1 (
         echo Error running %%s >&2
         exit /b 1
