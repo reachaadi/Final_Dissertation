@@ -14,7 +14,7 @@ def build_generation_prompt(source_text: str, max_cases: int) -> dict:
     "test_cases": [
         {
             "test_case_id": "TC-001",
-            "requirement_id": "REQ-123",
+            "requirement_id": "REQ-001",
             "title": "Example",
             "description": "...",
             "test_steps": ["step 1", "step 2"],
@@ -75,6 +75,7 @@ IMPROVEMENT GUIDELINES:
 OUTPUT FORMAT:
 Return ONLY a valid JSON object with a top-level key 'test_cases' which is a list of objects.
 Each object must have exactly these fields: test_case_id, requirement_id, title, description, test_steps (list of strings), expected_results, and priority (P1/P2/P3).
+For each new requirement(Ex: REQ-002), create a test_case_id starting from TC-001.(Ex: Requirement ID: REQ-002 should start again from TC-001).
 
 IMPORTANT:
 - If test cases are already good, return them with minor improvements

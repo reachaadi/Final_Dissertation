@@ -47,7 +47,7 @@ class TestCaseGenerator:
             temperature=0.3,  # Slightly higher temperature for more creative improvements
         )
         response = self.llm_client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-2.5-pro",
             contents=prompt,
             config=verification_config,
         )

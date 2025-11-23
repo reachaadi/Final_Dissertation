@@ -25,7 +25,7 @@
             "envFile": "${workspaceFolder}/.venv",
             "console": "integratedTerminal",
             "env": {
-                "GENAI_KEY": "AIzaSyCt5lJj_ySBBrLg_k7R81RLhoq2ezcMOsE"
+                "GENAI_KEY": "AIzaSyBTJ9l3ss0TUBjVEI8BJAPF3pliOq83NP0"
             }
         }
     ]

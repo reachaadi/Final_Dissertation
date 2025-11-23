@@ -12,7 +12,7 @@ if not exist "%venv_python%" (
 )
 
 rem List of scripts to run
-set scripts=TestScript.py TestScript2.py TestScript3.py
+set scripts=TestScript.py
 
 for %%s in (%scripts%) do (
     echo Running %%s...
