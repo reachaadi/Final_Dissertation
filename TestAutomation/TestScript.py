@@ -128,7 +128,7 @@ try:
         # Dynamically check expected result from the D column
         found_message = ""
         try:
-            time.sleep(40)
+            time.sleep(20)
             error_element = driver.find_element(By.ID, "error")
             found_message = error_element.text
         except Exception:
