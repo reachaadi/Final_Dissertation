@@ -11,19 +11,17 @@ if not exist "%venv_python%" (
     exit /b 1
 )
 
-rem Hardcoded full path to Excel config file
-set "excel_file=%script_dir%.venv\Scripts\TestConfig.xlsx"
-set "sheet_name=Tests"
+rem List of scripts to run
+set scripts=TestScript.py
 
-rem Call helper Python to read Excel and get enabled script names
-for /f "usebackq delims=" %%s in (`"%venv_python%" "%script_dir%get_enabled_scripts.py" "%excel_file%" "%sheet_name%"`) do (
+for %%s in (%scripts%) do (
     echo Running %%s...
-    "%venv_python%" "%script_dir%%%s"
+    "%venv_python%" "%script_dir%\%%s"
     if errorlevel 1 (
         echo Error running %%s >&2
         exit /b 1
     )
 )
 
-echo All selected scripts executed.
+echo All scripts executed.
 endlocal
