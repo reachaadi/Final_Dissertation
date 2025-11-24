@@ -97,9 +97,12 @@ with open(report_file, "w") as report:
 try:
     for row in sheet.iter_rows(min_row=2, values_only=True):
         scenario, url, username, password, expected_result = row
+        if scenario is None:
+            break
+
         print(f"Running test for {scenario}: url={url} username={username} password={password}")
 
-        driver.get(url)
+        driver.get(str(url))
 
         username_field = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, "username"))
