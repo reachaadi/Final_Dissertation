@@ -12,7 +12,7 @@ if not exist "%venv_python%" (
 )
 
 rem Hardcoded full path to Excel config file
-set "excel_file=C:\Users\padma\Projects\Final_Dissertation\TestAutomation\TestConfig.xlsx"
+set "excel_file=%script_dir%.venv\Scripts\TestConfig.xlsx"
 set "sheet_name=Tests"
 
 rem Call helper Python to read Excel and get enabled script names
