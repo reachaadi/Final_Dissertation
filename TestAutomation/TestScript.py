@@ -96,10 +96,10 @@ with open(report_file, "w") as report:
 
 try:
     for row in sheet.iter_rows(min_row=2, values_only=True):
-        scenario, username, password, expected_result = row
-        print(f"Running test for {scenario}: username={username} password={password}")
+        scenario, url, username, password, expected_result = row
+        print(f"Running test for {scenario}: url={url} username={username} password={password}")
 
-        driver.get("https://practicetestautomation.com/practice-test-login/")
+        driver.get(url)
 
         username_field = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, "username"))
